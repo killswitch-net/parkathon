@@ -1,16 +1,6 @@
 version: '3.8'
 
 services:
-    nginx:
-        build:
-            context: ./nginx
-        ports:
-            - "80:80"
-            - "443:443"
-        depends_on:
-            - backend
-            - frontend
-          
     frontend:
         build:
             context: ./frontend
@@ -49,6 +39,16 @@ services:
             - parkathon-data
         networks:
             - app-network
+
+    nginx:
+        build:
+            context: ./nginx
+        ports:
+            - "80:80"
+            - "443:443"
+        depends_on:
+            - backend
+            - frontend
 
     python-service:
         build:
