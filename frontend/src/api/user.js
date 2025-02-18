@@ -1,14 +1,45 @@
 import axios from 'axios';
 
-const API = axios.create({
-    baseURL: 'http://localhost:9000',
-    withCredentials: true
-});
+export const signup = async (name, email, password) => {
+    try {
+        const response = await axios.post(`http://localhost:9000/user/signup?name=${name}&email=${email}&password=${password}`);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error during signup:", error.response.data.error);
+        throw error;
+    }
+};
 
-export const signup = (userData) => API.post('/user/signup', userData);
+export const login = async (email, password) => {
+    try {
+        const response = await axios.post(`http://localhost:9000/user/login?email=${email}&password=${password}`);
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error during login:", error.response.data.error);
+        throw error;
+    }
+};
 
-export const login = (userData) => API.post('/user/login', userData);
+export const getProfile = async () => {
+    try {
+        const response = await axios.post('http://localhost:9000/user/profile');
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching profile:", error.response.data.error);
+        throw error;
+    }
+};
 
-export const getProfile = () => API.get('/user/profile');
-
-export const logout = () => API.post('/user/logout');
+export const logout = async () => {
+    try {
+        const response = await axios.post('http://localhost:9000/user/logout');
+        console.log(response.data);
+        return response.data;
+    } catch (error) {
+        console.error("Error during logout:", error.response.data.error);
+        throw error;
+    }
+};

@@ -11,7 +11,7 @@ def predict():
     destination = data['coords']
     timestamp   = data['timestamp']
     weather     = data['weather']
-    radius      = data.get('k', 50)  # default to 50 meters
+    radius      = data.get('radius', 50)  # default to 50 meters
 
     # POST request to the /park/find endpoint
     lat, lon = map(float, destination.split(','))
@@ -29,11 +29,11 @@ def predict():
     results = []
     for spot in nearest_spots:
 
-        spot_lon = spot['lon']
-        spot_lat = spot['lat']
+        spot_lat = spot[2]
+        spot_lon = spot[3]
         model = train_model(spot_lon, spot_lat)  # train a model for each spot
         probability = parkingChance(model, timestamp, weather)
-        results.append({'coords': f"{spot_lon},{spot_lat}", 'probability': probability})
+        results.append({'coords': f"{spot_lat},{spot_lon}", 'probability': probability})
 
     return jsonify(results)
 
