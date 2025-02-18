@@ -37,8 +37,6 @@ services:
             - "9000:9000"
         depends_on:
             - parkathon-data
-        networks:
-            - app-network
 
     nginx:
         build:
