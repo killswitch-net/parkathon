@@ -20,5 +20,5 @@ async function parkingPrediction(coords, timestamp, weather, radius=50) {
 /* EXAMPLE USAGE: 
  * parkingPrediction('40.7128,-74.0060', '15-10-2023 14:00', 'Sunny 23C', 50);
  * Finds the all the available parking spots in given radius with the above coordinates, timestamp and weather.
- * Returns a list of spots ([lon,lat] pairs) with their respective probabilities of being free. 
+ * Returns a list of spots ([lat,lon] pairs) with their respective probabilities of being free. 
  */

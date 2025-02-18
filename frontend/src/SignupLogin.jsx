@@ -16,9 +16,9 @@ function SignupLogin({ setShowSignupLogin }) {
 
         try {
             if (action === "Login") {
-                await login({ email: form.email, password: form.password });
+                await login(form.email, form.password);
             } else if (action === "Sign Up") {
-                await signup({ name: form.name, email: form.email, password: form.password });
+                await signup(form.name, form.email, form.password);
             }
             setShowSignupLogin(false);
         } catch (error) {
