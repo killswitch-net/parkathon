@@ -3,6 +3,7 @@ FROM node:18-alpine as frontend-build
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
+RUN npm install express mysql2 bcrypt jsonwebtoken cookie-parser dotenv cors
 COPY . .
 
 ARG VITE_GOOGLE_MAPS_API_KEY
