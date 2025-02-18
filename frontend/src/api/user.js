@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const signup = async (name, email, password) => {
     try {
+		console.log(import.meta.env);
         const response = await axios.post(`http://${import.meta.env.MY_HOST}:9000/user/signup?name=${name}&email=${email}&password=${password}`);
         console.log(response.data);
         return response.data;
