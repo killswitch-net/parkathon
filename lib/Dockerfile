@@ -6,12 +6,14 @@ RUN npm install
 RUN npm install express mysql2 bcrypt jsonwebtoken cookie-parser dotenv cors
 COPY . .
 
+ARG MY_HOST
 ARG DB_HOST
 ARG DB_USER
 ARG DB_PASSWORD
 ARG DB_NAME
 ARG OPENAI_API_KEY
 
+ENV MY_HOST=$MY_HOST
 ENV DB_HOST=$DB_HOST
 ENV DB_USER=$DB_USER
 ENV DB_PASSWORD=$DB_PASSWORD

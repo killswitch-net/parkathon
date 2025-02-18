@@ -1,3 +1,4 @@
+import os
 import requests
 from flask import Flask, request, jsonify
 from model import train_model, parkingChance
@@ -15,7 +16,7 @@ def predict():
 
     # POST request to the /park/find endpoint
     lat, lon = map(float, destination.split(','))
-    response = requests.post('http://localhost:9000/park/find', json={
+    response = requests.post(f'http://{os.getenv('MY_HOST')}:9000/park/find', json={
         'lat': lat,
         'lon': lon,
         'rad': radius

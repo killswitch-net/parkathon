@@ -3,7 +3,7 @@ import axios from "axios";
 export const vacateParkingSpot = async (userId, parkingId) => {
     try {
         const response = await axios.post(
-            `http://localhost:9000/park/vacay?user=${userId}&parking=${parkingId}`
+            `http://${import.meta.env.MY_HOST}:9000/park/vacay?user=${userId}&parking=${parkingId}`
         );
         console.log(response.data);
         return response.data;
