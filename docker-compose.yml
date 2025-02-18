@@ -15,10 +15,10 @@ services:
             context: ./frontend
             dockerfile: Dockerfile
             args:
-                - MY_HOST=backend
+                - MY_HOST=$MY_HOST
                 - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         environment:
-            - MY_HOST=backend
+            - MY_HOST=$MY_HOST
             - VITE_GOOGLE_MAPS_API_KEY=${VITE_GOOGLE_MAPS_API_KEY}
         depends_on:
             - backend
@@ -29,15 +29,15 @@ services:
             context: ./lib
             dockerfile: Dockerfile
             args:
-                - MY_HOST=backend
                 - DB_HOST=parkathon-data
+                - MY_HOST=$MY_HOST
                 - DB_USER=${DB_USER}
                 - DB_PASSWORD=${DB_PASSWORD}
                 - DB_NAME=${DB_NAME}
                 - OPENAI_API_KEY=${OPENAI_API_KEY}
         environment:
-            - MY_HOST=backend
             - DB_HOST=parkathon-data
+            - MY_HOST=$MY_HOST
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
             - DB_NAME=${DB_NAME}
@@ -54,15 +54,15 @@ services:
             context: ./src
             dockerfile: Dockerfile
             args:
-                - MY_HOST=backend
                 - DB_HOST=parkathon-data
+                - MY_HOST=$MY_HOST
                 - DB_USER=${DB_USER}
                 - DB_PASSWORD=${DB_PASSWORD}
                 - DB_NAME=${DB_NAME}
                 - OPENAI_API_KEY=${OPENAI_API_KEY}
         environment:
-            - MY_HOST=backend
             - DB_HOST=parkathon-data
+            - MY_HOST=$MY_HOST
             - DB_USER=${DB_USER}
             - DB_PASSWORD=${DB_PASSWORD}
             - DB_NAME=${DB_NAME}
