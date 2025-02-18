@@ -17,9 +17,9 @@ let tree = new kDTree(/* 2 */);
 
 ### Insert/Remove
 
-* InsertPoint: Inserts a new point to the tree, does not take duplicates into account!
-* EnsurePoint: Inserts a new point to the tree (if there is no other point with the same coordinates)!
-* RemovePoint: Removes a point from the tree if the point was in the tree!
+* **InsertPoint:** Inserts a new point to the tree, does not take duplicates into account!
+* **EnsurePoint:** Inserts a new point to the tree (if there is no other point with the same coordinates)!
+* **RemovePoint:** Removes a point from the tree if the point was in the tree!
 
 ```js
 tree.InsertPoint([2, 3]);
@@ -28,7 +28,7 @@ tree.RemovePoint([2, 3]);
 
 ### Insert/Remove Multiple
 
-* InsertPoints/EnsurePoints: Insert multiple points (stored in an array) in the tree!
+* **InsertPoints/EnsurePoints:** Insert multiple points (stored in an array) in the tree!
 
 ```js
 tree.InsertPoints([[2, 3], [5, 3], [2, 5], [8, 1]]);
@@ -54,7 +54,7 @@ tree.Query(target, radius).forEach((pt) => {
 
 Simple queries regarding the roads and geometrical elements of a region can be retrieved using the following functions:
 
-* OpenStreetMapFetchRoads: Fetches roads and geometrical data within a specified radius around a region.
+* **OpenStreetMapFetchRoads:** Fetches roads and geometrical data within a specified radius around a region.
 	- params
 		- `node` | The ID of the region or node for which to request information.
 		- `radius` | The search radius in meters.
@@ -72,7 +72,7 @@ parking.OpenStreetMapFetchRoads(57554537 /* Thessaloniki */ , 1000).then((roads)
 });
 ```
 
-* OpenStreetNodeInfo: A simpler version of OpenStreetMapFetchRoads that only returns the tags.
+* **OpenStreetNodeInfo:** A simpler version of OpenStreetMapFetchRoads that only returns the tags.
 	- params
 		- `node` | The ID of the region or node for which to request information.
 	- return 
@@ -87,7 +87,7 @@ parking.OpenStreetNodeInfo(57554537 /* Thessaloniki */).then((info) => {
 });
 ```
 
-* OpenStreetMapFetchNodesNamed: Returns a list of places with the specified name.
+* **OpenStreetMapFetchNodesNamed:** Returns a list of places with the specified name.
 	- params
 		- `name` | The name of the place we want to search
 	- return
@@ -122,4 +122,62 @@ parking.OpenStreetMapFetchRoads(57554537 /* Thessaloniki */, 1000).then((road) =
 		console.log(spots.length, "spots in", info[0].tags.name);
 	});
 });
+```
+## Predict
+
+Finds the all the available parking spots in given radius with the above coordinates, timestamp and weather. Returns a list of spots ([lon,lat] pairs) with their respective probabilities of being free. 
+
+### Database Interaction
+
+* **DB_connect:** Establishes a connection to the MySQL database using environment variables for configuration.
+```python
+from db import DB_connect
+conn = DB_connect()
+```
+
+* **fetch:** Fetches all parking instances at a given spot (latitude and longitude).
+```python
+from db import fetch
+info = fetch(lat, lon)
+```
+
+* **fetch_all:** Fetches all distinct parking spots (latitude and longitude pairs are unique for each spot). *(OBSOLETE)*
+```python
+from db import fetch_all
+unique = fetch_all()
+```
+
+### Preprocessing
+
+* **preprocess:** Splits the DataFrame into two DataFrames: one for the start (label 0) and one for the end of the trips (label 1).
+```python
+from preprocessing import preprocess
+df1, df2 = preprocess(df)
+```
+
+* **add_features:** Creates new features out of a timestamp.
+```python
+from preprocessing import add_features
+df = add_features(df)
+```
+
+### Model Training and Prediction
+
+* **train_model:** Trains a Random Forest classifier on the parking data for a given spot.
+```python
+from model import train_model
+model = train_model(spot_lon, spot_lat)
+```
+
+* **parkingChance:** Predicts the probability that a given parking spot is free based on the trained model, timestamp, and weather conditions.
+```python
+from model import parkingChance
+probability = parkingChance(model, timestamp, weather)
+```
+
+* **parkingPrediction:** Handles POST requests to predict parking spot availability based on user input.
+
+Example Usage:
+```js
+parkingPrediction('40.7128,-74.0060', '15-10-2023 14:00', 'Sunny 23C', 50);
 ```
