@@ -14,6 +14,8 @@ services:
         depends_on:
             - backend
             - python-service
+        networks:
+            - app-network
 
     backend:
         build:
@@ -37,6 +39,8 @@ services:
             - "9000:9000"
         depends_on:
             - parkathon-data
+        networks:
+            - app-network
 
     nginx:
         build:
@@ -47,6 +51,8 @@ services:
         depends_on:
             - backend
             - frontend
+        networks:
+            - app-network
 
     python-service:
         build:
