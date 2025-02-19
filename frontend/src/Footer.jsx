@@ -1,9 +1,8 @@
 import { CarFront, CircleParking, ArrowDown, X, Search } from "lucide-react";
 import { occupyPark } from "./api/occupyPark";
 import { getParkingLocations } from "./api/getParkingLocations";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import SignupLogin from "./SignupLogin";
-import Cookies from "js-cookie";
 import CircularProgress from "@mui/material/CircularProgress";
 import { formatCoordinates } from "./utils/formatCoordinates";
 import Dictaphone from "./Dictaphone";
@@ -24,23 +23,8 @@ function Footer({
     const [loadingParkingLocations, setLoadingParkingLocations] =
         useState(false);
 
-    const handleParkButton = () => {
-        // const userToken = Cookies.get("user_token");
-        // console.log("token: ", userToken);
-
-        // if (!userToken) {
-        //     setShowSignupLogin(true);
-        //     return;
-        // }
-
-        console.log(userId);
-        if (!userId) {
-            setShowSignupLogin(true);
-            return;
-        }
-
-        try {
-            setParkIsLoading(true);
+    const updateUserLocation = () => {
+        return new Promise((resolve, reject) => {
             if ("geolocation" in navigator) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -50,24 +34,34 @@ function Footer({
                         };
                         setCurrentLocation(location);
                         setMarker("parking");
-                        occupyPark(userId, location.lat, location.lng);
-                        setParkIsLoading(false);
-                        console.log(location);
+                        resolve(position.coords);
                     },
                     (error) => {
                         // For some reason Chrome instantly throws an error when it asks for gps permission
-                        // setParkIsLoading(false);
-                        console.error("Error getting location:", error);
+                        reject(`Geolocation failed with error ${error}`);
                     },
                 );
             } else {
-                setParkIsLoading(false);
-                alert("Geolocation is not supported by your browser");
+                reject("Geolocation is not supported by your browser");
             }
-        } catch {
-            setParkIsLoading(false);
-            console.error("Error getting location");
+        });
+    };
+
+    const handleParkButton = async () => {
+        if (!userId) {
+            setShowSignupLogin(true);
+            return;
         }
+    
+        setParkIsLoading(true);
+        updateUserLocation().then((coords) => {
+            occupyPark(userId, coords.latitude, coords.longitude);
+            setParkIsLoading(false);
+            console.log(coords);
+        }).catch((error) => {
+            setParkIsLoading(false);
+            console.error(error);
+        });
     };
 
     const handleDriveClick = () => {

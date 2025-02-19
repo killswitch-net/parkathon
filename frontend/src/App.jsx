@@ -1,10 +1,10 @@
 import GMap from "./GMap";
 import Footer from "./Footer";
 import Options from "./Options";
-import { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useState } from "react";
 import ParkingSpots from "./ParkingSpots";
 import Popup from "./Popup";
+import Locate from "./Locate";
 
 function App() {
     const [currentLocation, setCurrentLocation] = useState(null);
@@ -27,6 +27,10 @@ function App() {
                 setActiveParkingSpots={setActiveParkingSpots}
             />
             <Options setPopupOpen={setPopupOpen} popupOpen={popupOpen} />
+            <Locate
+                setMarker={setMarker}
+                setCurrentLocation={setCurrentLocation}
+            />
             <Popup
                 popupOpen={popupOpen}
                 isLoading={isLoading}
