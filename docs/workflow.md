@@ -9,28 +9,42 @@ In this file we describe the idea, functionality, the design choices, the framew
 4. [Frameworks and Tools](#frameworks-and-tools)
 
 ## Idea
-
-The main idea is to collect information about parking spots (parking events, timestamps, weather). This data is then mapped and stored in a database. The stored information can later be used to provide accurate parking spot suggestions. Essentially, `Parkathon` aims to enhance the searching experience of the user, transitioning from arbitrary to probabilistic searches.
+The main idea is to collect information about parking spots (parking events, timestamps, weather). 
+This data is then mapped and stored in a database. The stored information can later be used to provide accurate parking spot suggestions. 
+Essentially, `Parkathon` aims to enhance the searching experience of the user, transitioning from arbitrary to probabilistic searches.
 
 ## Functionality
 
+![Schematic](../assets/schematic.png)
+
 ### User Authentication
-To use the app, the user is prompted to log in. Their credentials are handled securely using *hashing* for passwords and secure *tokens* for session cookies.
+To use the app, the user is prompted to log in (by pressing the park button on the bottom right corner).
+Their credentials are handled securely using *hashing* for passwords and secure *tokens* for session cookies.
 
 ### Setting Destination
-After logging in, the user sets their destination, triggering a call to the backend. The backend receives the user's position (latitude and longitude), timestamp, and weather information as input.
+The user sets their destination, by either clicking the drive button on the bottom left, 
+or by clicking the microphone button and announcing their destination (and then clicking the microphone button again). 
+The backend receives the user's position (latitude and longitude), timestamp, and weather information as input.
 
 ### Locating Nearby Spots
-The app fetches information from the database and uses a **kd-tree** to locate available parking spots within a specified radius from the destination. Since it is unrealistic to assume the database always has up-to-date information about parking spot availability (as not all users use the app), the app makes additional calls to the database for each identified "available" spot. These calls gather any entries related to that specific spot.
+Parking spots are determined through the Open Street api that provides information about roads and parking regulations.
+The app fetches information from the database and uses a **kd-tree** to locate unused parking spots.
+Illegaly parked users or over-parked places are handled with care!
+
+![KDTree](../assets/kdtree.png)
+
+Since it is unrealistic to assume the database always has up-to-date information about parking spot availability (as not all users use the app), 
+the app makes additional calls to the database for each identified "available" spot. 
+These calls gather any entries related to that specific spot that are then fed through an AI model to predict availability.
 
 ### Prediction
-The gathered data is then preprocessed, and new meaningful features are added. A Random Forest classifier with regression is trained on this data to predict the probability that a given parking spot is free, based on the time, weather, and other factors. The results are displayed to the user as color-coded pins on a map, with green indicating higher probabilities and red indicating lower probabilities.
+The gathered data is then preprocessed, and new meaningful features are added. 
+A Random Forest classifier with regression is trained on this data to predict the probability that a given parking spot is free, based on the time, weather, and other factors. 
+The results are displayed to the user as color-coded pins on a map, with green indicating higher probabilities and red indicating lower probabilities.
 
 ### Updating Parking Status
-Once the user reaches their destination and parks, they press the 'park' button, creating a new entry in the database. Similarly, when the user unparks their car, they update the database accordingly.
-
-### Schematic
-![Schematic](../assets/schematic.png)
+Once the user reaches their destination and parks, they press the 'park' button, creating a new entry in the database. 
+Similarly, when the user unparks their car, they update the database accordingly.
 
 ## Design
 
@@ -63,4 +77,3 @@ The design focuses on providing a seamless and efficient experience, allowing us
 - **Docker**: Containerization tool for deploying the application.
 - **MySQL**: Database management system for storing parking data.
 - **npm**: Node.js package manager for managing dependencies.
-- **serve**: Static file serving and single-page application support.
