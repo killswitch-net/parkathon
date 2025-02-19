@@ -20,7 +20,7 @@ def predict():
             return jsonify({'error': 'Missing required parameters'}), 400
 
         print(f"Making request to backend with lat: {lat}, lon: {lon}, radius: {radius}")
-        response = requests.get('http://localhost:9000/park/find', params={
+        response = requests.get('https://localhost/api/park/find', params={
             'lat': lat,
             'lon': lon,
             'rad': radius
