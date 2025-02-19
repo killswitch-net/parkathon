@@ -15,6 +15,7 @@ function Footer({
     setParkingLocations,
     setUserId,
     radius,
+    setMessage,
 }) {
     const [driveOpen, setDriveOpen] = useState(false);
     const [destinationInput, setDestinationInput] = useState("");
@@ -52,16 +53,20 @@ function Footer({
             setShowSignupLogin(true);
             return;
         }
-    
+
         setParkIsLoading(true);
-        updateUserLocation().then((coords) => {
-            occupyPark(userId, coords.latitude, coords.longitude);
-            setParkIsLoading(false);
-            console.log(coords);
-        }).catch((error) => {
-            setParkIsLoading(false);
-            console.error(error);
-        });
+        updateUserLocation()
+            .then((coords) => {
+                occupyPark(userId, coords.latitude, coords.longitude);
+                setMessage("Parked successfully!");
+                setParkIsLoading(false);
+                console.log(coords);
+            })
+            .catch((error) => {
+                setMessage("Error adding park location");
+                setParkIsLoading(false);
+                console.error(error);
+            });
     };
 
     const handleDriveClick = () => {
@@ -89,11 +94,11 @@ function Footer({
                 return location;
             } else {
                 console.error("Geocoding failed:", data.status);
-                alert("Could not find this location");
+                setMessage("Could not find this location");
             }
         } catch (error) {
+            setMessage("Error fetching location data");
             console.error("Error fetching location:", error);
-            alert("Error fetching location data");
         }
     };
 
@@ -126,9 +131,16 @@ function Footer({
             //     { lat: location.lat + 0.001, lng: location.lng + 0.002 }
             // ]);
 
+            if (parkingLocations.length === 0) {
+                setMessage(
+                    "No available parking locations found. Increase the range in settings.",
+                );
+            }
+
             setMarker("destination");
             setLoadingParkingLocations(false);
         } catch (error) {
+            setMessage("Error fetching available parking locations");
             setMarker("destination");
             setLoadingParkingLocations(false);
             console.error("Error getting parking locations:", error);
@@ -233,6 +245,7 @@ function Footer({
                             setParkingLocations={setParkingLocations}
                             setMarker={setMarker}
                             radius={radius}
+                            setMessage={setMessage}
                         />
                     </div>
                     {/* Park Button */}

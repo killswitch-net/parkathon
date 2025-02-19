@@ -1,6 +1,6 @@
 import { LocateFixed } from "lucide-react";
 
-function Locate({ setCurrentLocation, setMarker }) {
+function Locate({ setCurrentLocation, setMarker, setMessage }) {
     const updateUserLocation = () => {
         return new Promise((resolve, reject) => {
             if ("geolocation" in navigator) {
@@ -10,16 +10,19 @@ function Locate({ setCurrentLocation, setMarker }) {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
+                        setMessage("Geolocation successful");
                         setCurrentLocation(location);
                         setMarker("parking");
                         resolve(position.coords);
                     },
                     (error) => {
+                        setMessage("Geolocation failed");
                         // For some reason Chrome instantly throws an error when it asks for gps permission
                         reject(`Geolocation failed with error ${error}`);
                     },
                 );
             } else {
+                setMessage("Geolocation is not supported by your browser");
                 reject("Geolocation is not supported by your browser");
             }
         });

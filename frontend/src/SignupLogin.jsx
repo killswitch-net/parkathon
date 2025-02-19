@@ -5,7 +5,7 @@ import email_icon from "./assets/email.png";
 import { login, signup } from "./api/user";
 import { X } from "lucide-react";
 
-function SignupLogin({ setShowSignupLogin, setUserId }) {
+function SignupLogin({ setShowSignupLogin, setUserId, setMessage }) {
     const [action, setAction] = useState("Login");
     const [form, setForm] = useState({ name: "", email: "", password: "" });
 
@@ -14,16 +14,20 @@ function SignupLogin({ setShowSignupLogin, setUserId }) {
 
         try {
             if (action === "Login") {
-                const data = await login(form.email, form.password);
+                const data = await login(form.email, form.password).catch(() => {
+                    setMessage("Invalid email or password");
+                });
                 setUserId(data.userId);
             } else if (action === "Sign Up") {
-                const data = await signup(form.name, form.email, form.password);
+                const data = await signup(form.name, form.email, form.password).catch(() => {
+                    setMessage("Error trying to sign up");
+                });
                 setUserId(data.userId);
             }
             setShowSignupLogin(false);
         } catch (error) {
+            setMessage("Error trying to login or sign up");
             console.error("Form error:", error);
-            alert(`${action} failed!`);
         }
     };
 

@@ -7,7 +7,14 @@ import { getTranscriptLocation } from "./api/getTranscriptLocation";
 import { getParkingLocations } from "./api/getParkingLocations";
 import { formatCoordinates } from "./utils/formatCoordinates";
 
-function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingLocations, setMarker, radius }) {
+function Dictaphone({
+    getLocationFromDestination,
+    setCameraLocation,
+    setParkingLocations,
+    setMarker,
+    radius,
+    setMessage,
+}) {
     const {
         transcript,
         listening,
@@ -21,13 +28,14 @@ function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingL
             return;
         }
         if (listening) {
-            await new Promise(resolve => setTimeout(resolve, 300));
+            await new Promise((resolve) => setTimeout(resolve, 300));
             console.log("Final transcript:", transcript);
             SpeechRecognition.stopListening();
             try {
                 const destination = await getTranscriptLocation(transcript);
                 const location = await getLocationFromDestination(destination);
                 console.log("Found location:", location);
+                setMessage(`Navigating to ${destination}`);
                 setCameraLocation(location);
 
                 try {
@@ -42,7 +50,6 @@ function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingL
                 } catch (error) {
                     console.error("Error getting parking locations:", error);
                 }
-                
             } catch (error) {
                 console.error("Error getting location from transcript:", error);
             }

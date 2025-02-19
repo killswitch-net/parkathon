@@ -5,6 +5,7 @@ import { useState } from "react";
 import ParkingSpots from "./ParkingSpots";
 import Popup from "./Popup";
 import Locate from "./Locate";
+import MessageInfo from "./MessageInfo";
 
 function App() {
     const [currentLocation, setCurrentLocation] = useState(null);
@@ -16,6 +17,7 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [activeParkingSpots, setActiveParkingSpots] = useState([]);
     const [radius, setRadius] = useState(50);
+    const [message, setMessage] = useState("");
 
     return (
         <main className="relative h-screen">
@@ -30,6 +32,7 @@ function App() {
             <Locate
                 setMarker={setMarker}
                 setCurrentLocation={setCurrentLocation}
+                setMessage={setMessage}
             />
             <Popup
                 popupOpen={popupOpen}
@@ -40,6 +43,7 @@ function App() {
                 setRadius={setRadius}
                 radius={radius}
             />
+            <MessageInfo message={message} />
             <GMap
                 currentLocation={currentLocation}
                 cameraLocation={cameraLocation}
@@ -54,6 +58,7 @@ function App() {
                 setParkingLocations={setParkingLocations}
                 setUserId={setUserId}
                 radius={radius}
+                setMessage={setMessage}
             />
         </main>
     );

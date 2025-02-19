@@ -70,7 +70,7 @@ function ParkingSpots({
             onClick={handleParkingSpotsButton}
         >
             {popupOpen === "parking" ? (
-                <ArrowRight size={32} color="#c95353" />
+                <ArrowRight size={32} color="#2e2e2e" />
             ) : (
                 <CircleParkingOff size={32} color="#c95353" />
             )}
