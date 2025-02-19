@@ -7,6 +7,8 @@ import holidays
 
 def train_model(spot_lon, spot_lat):
     df = fetch(spot_lon, spot_lat)
+    if df.empty:
+        raise ValueError("No parking data available for the given location.")
     df1, df2 = preprocess(df)
     df1 = add_features(df1)
     if df2 is not None:
@@ -24,25 +26,19 @@ def train_model(spot_lon, spot_lat):
 
 def parkingChance(model, timestamp, weather):
     datetime_obj = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S')
-    
-    weather_parts = weather.split()
-    if len(weather_parts) >= 2:
-        conditions = weather_parts[0]
-        temperature = weather_parts[1].strip('C')
-    else:
-        return jsonify({'error': 'Invalid weather format'}), 400
-    
+    conditions, temperature = weather.split()
+    # Use the model’s classes to encode the condition (or provide a fallback)
     try:
         conditions_encoded = model.classes_.tolist().index(conditions)
     except ValueError:
-        conditions_encoded = -1  # If condition is unseen, assign -1
-    
-    try:
-        temperature = float(temperature)
-    except ValueError:
-        return jsonify({'error': 'Invalid temperature format'}), 400
+        conditions_encoded = -1  # or some default value
 
-    input_df = pd.DataFrame([{
+    if temperature.endswith('F'):
+        temperature = (int(temperature[:-1]) - 32) * 5.0 / 9.0
+    else:
+        temperature = int(temperature[:-1])
+
+    input_data = {
         'isWeekend':    datetime_obj.weekday() >= 5,
         'isHoliday':    datetime_obj.date() in holidays.GR(),
         'season':       datetime_obj.month % 12 // 3 + 1,
@@ -51,7 +47,8 @@ def parkingChance(model, timestamp, weather):
         'hour':         datetime_obj.hour,
         'conditions':   conditions_encoded,
         'temperature':  temperature
-    }])
-
+    }
+    input_df = pd.DataFrame([input_data])
+    print("Input for prediction:", input_df)
     probability = model.predict_proba(input_df)[:, 1][0]
     return probability

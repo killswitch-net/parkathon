@@ -16,6 +16,10 @@ function App() {
     const [isLoading, setIsLoading] = useState(false);
     const [activeParkingSpots, setActiveParkingSpots] = useState([]);
     const [radius, setRadius] = useState(50);
+    const [popupOpen, setPopupOpen] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [activeParkingSpots, setActiveParkingSpots] = useState([]);
+    const [radius, setRadius] = useState(50);
 
     return (
         <main className="relative h-screen">
@@ -53,6 +57,7 @@ function App() {
                 setMarker={setMarker}
                 setParkingLocations={setParkingLocations}
                 setUserId={setUserId}
+                radius={radius}
                 radius={radius}
             />
         </main>

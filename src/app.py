@@ -20,7 +20,7 @@ def predict():
             return jsonify({'error': 'Missing required parameters'}), 400
 
         print(f"Making request to backend with lat: {lat}, lon: {lon}, radius: {radius}")
-        response = requests.get('https://localhost/api/park/find', params={
+        response = requests.get('http://backend:9000/park/find', params={
             'lat': lat,
             'lon': lon,
             'rad': radius
@@ -37,7 +37,12 @@ def predict():
         for spot in nearest_spots:
             spot_lat = spot[2]
             spot_lon = spot[3]
-            model = train_model(spot_lon, spot_lat)
+            try:
+                model = train_model(spot_lon, spot_lat)
+            except ValueError as ve:
+                # Return a default probability or a specific error message
+                print(f"Training error: {ve}")
+                return jsonify({'error': 'No parking data available for this location'}), 404
             probability = parkingChance(model, timestamp, weather)
             results.append({'coords': f"{spot_lat},{spot_lon}", 'probability': probability})
 
