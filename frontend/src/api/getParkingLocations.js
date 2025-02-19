@@ -6,7 +6,7 @@ const WEATHER = "Sunny 23C";
 export const getParkingLocations = async (lat, lon, rad) => {
     try {
         const response = await axios.get(
-            `/api/park/find?lat=${lat}&lon=${lon}&radius=${rad}`
+            `/api/park/find?lat=${lat}&lon=${lon}&rad=${rad}`
         );
         console.log(response.data);
         return response.data;

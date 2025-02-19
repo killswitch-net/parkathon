@@ -9,6 +9,7 @@ function Popup({
     activeParkingSpots,
     userId,
     setRadius,
+    radius
 }) {
     const handleDeleteParkingSpot = async (parkingId) => {
         try {
@@ -53,7 +54,7 @@ function Popup({
                         <input
                             type="number"
                             className="w-16 [appearance:textfield] rounded-md border-2 border-slate-600 px-2 py-1.5 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                            defaultValue={50}
+                            defaultValue={radius}
                             onChange={(e) => {
                                 setRadius(e.target.value);
                             }}

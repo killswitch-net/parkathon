@@ -232,6 +232,7 @@ function Footer({
                             setCameraLocation={setCameraLocation}
                             setParkingLocations={setParkingLocations}
                             setMarker={setMarker}
+                            radius={radius}
                         />
                     </div>
                     {/* Park Button */}

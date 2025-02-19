@@ -38,6 +38,7 @@ function App() {
                 setActiveParkingSpots={setActiveParkingSpots}
                 userId={userId}
                 setRadius={setRadius}
+                radius={radius}
             />
             <GMap
                 currentLocation={currentLocation}

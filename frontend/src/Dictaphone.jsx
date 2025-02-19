@@ -7,7 +7,7 @@ import { getTranscriptLocation } from "./api/getTranscriptLocation";
 import { getParkingLocations } from "./api/getParkingLocations";
 import { formatCoordinates } from "./utils/formatCoordinates";
 
-function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingLocations, setMarker }) {
+function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingLocations, setMarker, radius }) {
     const {
         transcript,
         listening,
@@ -34,7 +34,7 @@ function Dictaphone({ getLocationFromDestination, setCameraLocation, setParkingL
                     let parkingLocations = await getParkingLocations(
                         location.lat,
                         location.lng,
-                        50,
+                        radius,
                     );
                     parkingLocations = formatCoordinates(parkingLocations);
                     setParkingLocations(parkingLocations);
