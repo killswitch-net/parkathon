@@ -7,6 +7,7 @@ export const getParkingLocations = async (lat, lon, rad) => {
     try {
         const response = await axios.get(
             `/mlm/predict?lat=${lat}&lon=${lon}&timestamp=${TIMESTAMP}&weather=${WEATHER}&radius=${rad}`
+            // `/api/park/find/?lat=${lat}&lon=${lon}&rad=${rad}`
         );
         console.log(response.data);
         return response.data;

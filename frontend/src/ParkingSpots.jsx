@@ -1,19 +1,23 @@
-import { CircleParkingOff, X, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { CircleParkingOff, ArrowRight } from "lucide-react";
 import { getActiveParkingSpots } from "./api/getActiveParkingSpots";
-import { vacateParkingSpot } from "./api/vacateParkingSpot";
-import CircularProgress from "@mui/material/CircularProgress";
 import { renameCoordinates } from "./utils/formatCoordinates";
 
-function ParkingSpots({ userId }) {
-    const [activeParkingSpotsOpen, setActiveParkingSpotsOpen] = useState(false);
-    const [activeParkingSpots, setActiveParkingSpots] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
-
+function ParkingSpots({
+    userId,
+    popupOpen,
+    setPopupOpen,
+    setIsLoading,
+    setActiveParkingSpots,
+}) {
     const handleParkingSpotsButton = async () => {
+        if (popupOpen === "parking") {
+            setPopupOpen(null);
+            return;
+        }
+
         try {
             setIsLoading(true);
-            setActiveParkingSpotsOpen(true);
+            setPopupOpen("parking");
             let spots = await getActiveParkingSpots(userId);
             spots = renameCoordinates(spots);
             setActiveParkingSpots(spots);
@@ -35,22 +39,8 @@ function ParkingSpots({ userId }) {
             setIsLoading(false);
         } catch (error) {
             setIsLoading(false);
+            setPopupOpen(null);
             console.error("Error getting active parking spots:", error);
-        }
-    };
-
-    const handleCollapseParkingSpotsButton = () => {
-        setActiveParkingSpotsOpen(false);
-    };
-
-    const handleDeleteParkingSpot = async (parkingId) => {
-        try {
-            await vacateParkingSpot(userId, parkingId);
-            setActiveParkingSpots((prevSpots) =>
-                prevSpots.filter((spot) => spot.parking_id !== parkingId),
-            );
-        } catch (error) {
-            console.error("Error deleting parking spot:", error);
         }
     };
 
@@ -75,62 +65,16 @@ function ParkingSpots({ userId }) {
     };
 
     return (
-        <>
-            {!activeParkingSpotsOpen ? (
-                <button
-                    className="fixed top-4 right-4 z-10 rounded-full border-2 border-slate-600 bg-white p-2 shadow-sm shadow-slate-500 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                    onClick={handleParkingSpotsButton}
-                >
-                    <CircleParkingOff size={32} color="#c95353" />
-                </button>
+        <button
+            className="fixed top-4 right-4 z-999 rounded-full border-2 border-slate-600 bg-white p-2 shadow-sm shadow-slate-500 transition-colors hover:cursor-pointer hover:bg-slate-100"
+            onClick={handleParkingSpotsButton}
+        >
+            {popupOpen === "parking" ? (
+                <ArrowRight size={32} color="#c95353" />
             ) : (
-                <div className="fixed top-4 right-4 z-10 flex flex-col gap-4 rounded-xl border-2 border-slate-600 bg-white p-4 shadow-sm shadow-slate-500">
-                    {isLoading ? (
-                        <div className="flex items-center gap-2">
-                            <CircularProgress size={32} />
-                            <h3 className="">Loading</h3>
-                        </div>
-                    ) : (
-                        <>
-                            <div className="flex items-center justify-between gap-6">
-                                <h2 className="text-lg font-bold">
-                                    {activeParkingSpots.length === 0 ? "No active parking spots": "Active Parking Spots"}
-                                </h2>
-                                <button
-                                    className="self-end rounded-full border-2 border-slate-600 p-1 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                                    onClick={handleCollapseParkingSpotsButton}
-                                >
-                                    <ChevronUp size={24} color="#2e2e2e" />
-                                </button>
-                            </div>
-                            {activeParkingSpots.length !== 0 && <hr className="h-px w-full bg-slate-300" />}
-                            <div className="flex flex-col gap-2">
-                                {activeParkingSpots.map((spot, index) => (
-                                    <div
-                                        key={spot.parking_id}
-                                        className="flex items-center justify-between gap-3"
-                                    >
-                                        <h3 className="text-lg text-gray-800">
-                                            {`${index + 1}. ${spot.name}`}
-                                        </h3>
-                                        <button
-                                            className="rounded-full border-2 border-slate-600 p-1 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                                            onClick={() =>
-                                                handleDeleteParkingSpot(
-                                                    spot.parking_id,
-                                                )
-                                            }
-                                        >
-                                            <X size={24} color="#c95353" />
-                                        </button>
-                                    </div>
-                                ))}
-                            </div>
-                        </>
-                    )}
-                </div>
+                <CircleParkingOff size={32} color="#c95353" />
             )}
-        </>
+        </button>
     );
 }
 

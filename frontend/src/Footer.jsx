@@ -15,11 +15,14 @@ function Footer({
     setMarker,
     setParkingLocations,
     setUserId,
+    radius,
 }) {
     const [driveOpen, setDriveOpen] = useState(false);
     const [destinationInput, setDestinationInput] = useState("");
     const [showSignupLogin, setShowSignupLogin] = useState(false);
     const [parkIsLoading, setParkIsLoading] = useState(false);
+    const [loadingParkingLocations, setLoadingParkingLocations] =
+        useState(false);
 
     const handleParkButton = () => {
         // const userToken = Cookies.get("user_token");
@@ -106,6 +109,7 @@ function Footer({
             return;
         }
 
+        setLoadingParkingLocations(true);
         const location = await getLocationFromDestination(destinationInput);
         console.log("Found location:", location);
         setCameraLocation(location);
@@ -114,7 +118,7 @@ function Footer({
             let parkingLocations = await getParkingLocations(
                 location.lat,
                 location.lng,
-                50,
+                radius,
             );
             parkingLocations = formatCoordinates(parkingLocations);
             setParkingLocations(parkingLocations);
@@ -129,8 +133,10 @@ function Footer({
             // ]);
 
             setMarker("destination");
+            setLoadingParkingLocations(false);
         } catch (error) {
             setMarker("destination");
+            setLoadingParkingLocations(false);
             console.error("Error getting parking locations:", error);
         }
     };
@@ -175,41 +181,50 @@ function Footer({
                             className={`absolute transition-all duration-300 ${driveOpen ? "pointer-events-auto translate-x-0 opacity-100" : "pointer-events-none invisible translate-x-4 opacity-0"}`}
                         >
                             <div className="flex items-center gap-4">
-                                <button
-                                    className="rounded-full border-2 border-slate-600 p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                                    onClick={handleCancelDriveClick}
-                                >
-                                    <X size={32} color="#2e2e2e" />
-                                </button>
-                                <div className="flex flex-col gap-1">
-                                    <h3 className="text-xl text-gray-800">
-                                        Set Destination:
-                                    </h3>
-                                    <div className="flex gap-2">
-                                        <input
-                                            type="text"
-                                            placeholder="Enter destination"
-                                            className="w-50 rounded-md border-2 border-slate-600 px-2 py-1"
-                                            value={destinationInput}
-                                            onChange={(e) =>
-                                                setDestinationInput(
-                                                    e.target.value,
-                                                )
-                                            }
-                                            onKeyDown={(e) => {
-                                                if (e.key === "Enter") {
-                                                    handleSearchButton();
-                                                }
-                                            }}
-                                        />
-                                        <button
-                                            className="rounded-md p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
-                                            onClick={handleSearchButton}
-                                        >
-                                            <Search color="#2e2e2e" />
-                                        </button>
+                                {loadingParkingLocations ? (
+                                    <div className="mx-auto flex w-92 items-center gap-4 rounded-xl border-slate-600 p-4">
+                                        <CircularProgress size={32} />
+                                        Loading available parking locations
                                     </div>
-                                </div>
+                                ) : (
+                                    <>
+                                        <button
+                                            className="rounded-full border-2 border-slate-600 p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
+                                            onClick={handleCancelDriveClick}
+                                        >
+                                            <X size={32} color="#2e2e2e" />
+                                        </button>
+                                        <div className="flex flex-col gap-1">
+                                            <h3 className="text-xl text-gray-800">
+                                                Set Destination:
+                                            </h3>
+                                            <div className="flex gap-2">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Enter destination"
+                                                    className="w-42 rounded-md border-2 border-slate-600 px-2 py-1"
+                                                    value={destinationInput}
+                                                    onChange={(e) =>
+                                                        setDestinationInput(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === "Enter") {
+                                                            handleSearchButton();
+                                                        }
+                                                    }}
+                                                />
+                                                <button
+                                                    className="rounded-md p-2 transition-colors hover:cursor-pointer hover:bg-slate-100"
+                                                    onClick={handleSearchButton}
+                                                >
+                                                    <Search color="#2e2e2e" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </div>
